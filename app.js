@@ -1,6 +1,7 @@
 class App {
   constructor(){
     this.notes = []
+    this.id = ''
 
     this.$placeholder = document.querySelector('#placeholder')
     this.$form = document.querySelector('#form')
@@ -10,12 +11,17 @@ class App {
     this.$formButtons = document.querySelector('#form-buttons')
     this.$formCloseButton = document.querySelector('#form-close-button')
 
+    this.$modal = document.querySelector('.modal')
+    this.$modalTitle = document.querySelector('.modal-title')
+    this.$modalText = document.querySelector('.modal-text')
+    this.$modalCloseButton = document.querySelector('.modal-close-button')
+
     this.addEventListeners()
   }
   addEventListeners(){
     document.body.addEventListener('click', event => {
       this.handleFormClick(event)
-      
+      this.openModal(event)
     })
 
     this.$form.addEventListener('submit', event => {
@@ -28,6 +34,11 @@ class App {
       event.stopPropagation()
       this.addNote()
       this.closeForm()
+    })
+
+    this.$modalCloseButton.addEventListener('click', event => {
+      this.editNote(this.id)
+      this.closeModal()
     })
   }
   handleFormClick(event){
@@ -55,6 +66,22 @@ class App {
     this.$noteText.value = ""
   }
 
+  openModal(event){
+    const $selectedNote = event.target.closest('.note')
+    if(!$selectedNote) return
+    this.$modal.classList.toggle('open-modal')
+    const [noteTitle, noteText] = $selectedNote.children
+    this.$modalTitle.value = noteTitle.textContent
+    this.$modalText.value = noteText.textContent
+    this.id = Number($selectedNote.dataset.id)
+  }
+
+  closeModal(){
+    this.$modal.classList.toggle('open-modal')
+    this.$modalTitle.value = ""
+    this.$modalText.value = ""
+  }
+
   addNote(){
     const title = this.$noteTitle.value
     const text = this.$noteText.value
@@ -66,6 +93,13 @@ class App {
       id: this.notes.length > 0 ? this.notes[this.notes.length-1].id + 1 : 1
     }
     this.notes = [...this.notes, newNote]
+    this.displayNotes()
+  }
+
+  editNote(id){
+    const title = this.$modalTitle.value
+    const text = this.$modalText.value
+    this.notes = this.notes.map(note => note.id === id ? {...note, title, text} : note)
     this.displayNotes()
   }
 
