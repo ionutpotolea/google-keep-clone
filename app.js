@@ -99,12 +99,13 @@ class App {
   editNote(id){
     const title = this.$modalTitle.value
     const text = this.$modalText.value
-    this.notes = this.notes.map(note => note.id === id ? {...note, title, text} : note)
+    this.notes = this.notes.map(note => 
+      note.id === id ? {...note, title, text} : note)
     this.displayNotes()
   }
 
   displayNotes(){
-    this.$placeholder.style.display = this.notes>0 ? "none" : "flex"
+    this.$placeholder.style.display = this.notes.length > 0 ? "none" : "flex"
 
     this.$notes.innerHTML = this.notes.map(note => `
       <div style="background: ${note.color}" class='note' data-id=${note.id}>
