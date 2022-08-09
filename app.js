@@ -53,7 +53,7 @@ class App {
     })
 
     this.$colorTooltip.addEventListener('mouseover', function(){
-      this.style.display = "flex"
+      this.style.display = "block"
     })
 
     this.$colorTooltip.addEventListener('mouseout', function(){
@@ -108,9 +108,9 @@ class App {
 
   openTooltip(event){
     if(!event.target.matches('.toolbar-color')) return
-    this.$colorTooltip.style.display = "flex"
+    this.$colorTooltip.style.display = "block"
     const {x, y} = event.target.getBoundingClientRect()
-    this.$colorTooltip.style.left = `${x}px`
+    this.$colorTooltip.style.left = `${x-10}px`
     this.$colorTooltip.style.top = `${y+20}px`
     this.id = Number(event.target.dataset.id)
   }
