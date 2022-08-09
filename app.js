@@ -23,6 +23,7 @@ class App {
     document.body.addEventListener('click', event => {
       this.handleFormClick(event)
       this.openModal(event)
+      this.deleteNote(event)
     })
 
     document.body.addEventListener('mouseover', event => {
@@ -88,6 +89,7 @@ class App {
   }
 
   openModal(event){
+    if (event.target.matches('.toolbar-delete')) return
     const $selectedNote = event.target.closest('.note')
     if(!$selectedNote) return
     this.$modal.classList.toggle('open-modal')
@@ -148,6 +150,14 @@ class App {
     this.displayNotes()
   }
 
+  deleteNote(event){
+    event.stopPropagation()
+    if (!event.target.matches('.toolbar-delete')) return
+    const id = Number(event.target.dataset.id)
+    this.notes = this.notes.filter(note => note.id !== id)
+    this.displayNotes()
+  }
+
   displayNotes(){
     this.$placeholder.style.display = this.notes.length > 0 ? "none" : "flex"
 
@@ -158,7 +168,7 @@ class App {
         <div class="toolbar-container">
           <div class="toolbar">
             <img class="toolbar-color" data-id=${note.id} src="./icons/palette-line.svg">
-            <img class="toolbar-delete" src="./icons/delete-bin-7-line.svg">
+            <img class="toolbar-delete" data-id=${note.id} src="./icons/delete-bin-7-line.svg">
           </div>
         </div>
       </div>
