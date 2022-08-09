@@ -1,6 +1,6 @@
 class App {
   constructor(){
-    this.notes = []
+    this.notes = JSON.parse(localStorage.getItem('notes')) || []
     this.id = ''
 
     this.$placeholder = document.querySelector('#placeholder')
@@ -18,6 +18,7 @@ class App {
     this.$modalCloseButton = document.querySelector('.modal-close-button')
 
     this.addEventListeners()
+    this.render()
   }
   addEventListeners(){
     document.body.addEventListener('click', event => {
@@ -130,7 +131,7 @@ class App {
       id: this.notes.length > 0 ? this.notes[this.notes.length-1].id + 1 : 1
     }
     this.notes = [...this.notes, newNote]
-    this.displayNotes()
+    this.render()
   }
 
   editNote(id){
@@ -138,7 +139,7 @@ class App {
     const text = this.$modalText.value
     this.notes = this.notes.map(note => 
       note.id === id ? {...note, title, text} : note)
-    this.displayNotes()
+    this.render()
   }
 
   editNoteColor(event){
@@ -147,7 +148,7 @@ class App {
     if (!color) return
     this.notes = this.notes.map(note => 
       note.id === this.id ? {...note, color} : note)
-    this.displayNotes()
+    this.render()
   }
 
   deleteNote(event){
@@ -155,7 +156,16 @@ class App {
     if (!event.target.matches('.toolbar-delete')) return
     const id = Number(event.target.dataset.id)
     this.notes = this.notes.filter(note => note.id !== id)
+    this.render()
+  }
+
+  render(){
     this.displayNotes()
+    this.saveNotes()
+  }
+
+  saveNotes(){
+    localStorage.setItem('notes', JSON.stringify(this.notes))
   }
 
   displayNotes(){
