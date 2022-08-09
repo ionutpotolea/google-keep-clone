@@ -10,6 +10,7 @@ class App {
     this.$noteText = document.querySelector('#note-text')
     this.$formButtons = document.querySelector('#form-buttons')
     this.$formCloseButton = document.querySelector('#form-close-button')
+    this.$colorTooltip = document.querySelector('#color-tooltip')
 
     this.$modal = document.querySelector('.modal')
     this.$modalTitle = document.querySelector('.modal-title')
@@ -24,6 +25,14 @@ class App {
       this.openModal(event)
     })
 
+    document.body.addEventListener('mouseover', event => {
+      this.openTooltip(event)
+    })
+
+    document.body.addEventListener('mouseout', event => {
+      this.closeTooltip(event)
+    })
+
     this.$form.addEventListener('submit', event => {
       event.preventDefault()
       this.addNote()
@@ -36,9 +45,21 @@ class App {
       this.closeForm()
     })
 
-    this.$modalCloseButton.addEventListener('click', event => {
+    this.$modalCloseButton.addEventListener('click', () => {
       this.editNote(this.id)
       this.closeModal()
+    })
+
+    this.$colorTooltip.addEventListener('mouseover', function(){
+      this.style.display = "flex"
+    })
+
+    this.$colorTooltip.addEventListener('mouseout', function(){
+      this.style.display = "none"
+    })
+
+    this.$colorTooltip.addEventListener('click', event => {
+      this.editNoteColor(event)
     })
   }
   handleFormClick(event){
@@ -82,6 +103,20 @@ class App {
     this.$modalText.value = ""
   }
 
+  openTooltip(event){
+    if(!event.target.matches('.toolbar-color')) return
+    this.$colorTooltip.style.display = "flex"
+    const {x, y} = event.target.getBoundingClientRect()
+    this.$colorTooltip.style.left = `${x}px`
+    this.$colorTooltip.style.top = `${y+20}px`
+    this.id = Number(event.target.dataset.id)
+  }
+
+  closeTooltip(event){
+    if(!event.target.matches('.toolbar-color')) return
+    this.$colorTooltip.style.display = "none"
+  }
+
   addNote(){
     const title = this.$noteTitle.value
     const text = this.$noteText.value
@@ -104,6 +139,15 @@ class App {
     this.displayNotes()
   }
 
+  editNoteColor(event){
+    if (!event.target.matches('.color-option')) return
+    const color = event.target.dataset.color
+    if (!color) return
+    this.notes = this.notes.map(note => 
+      note.id === this.id ? {...note, color} : note)
+    this.displayNotes()
+  }
+
   displayNotes(){
     this.$placeholder.style.display = this.notes.length > 0 ? "none" : "flex"
 
@@ -113,7 +157,7 @@ class App {
         <div class="note-text">${note.text}</div>
         <div class="toolbar-container">
           <div class="toolbar">
-            <img class="toolbar-color" src="./icons/palette-line.svg">
+            <img class="toolbar-color" data-id=${note.id} src="./icons/palette-line.svg">
             <img class="toolbar-delete" src="./icons/delete-bin-7-line.svg">
           </div>
         </div>
