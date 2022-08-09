@@ -85,7 +85,7 @@ class App {
   addNote(){
     const title = this.$noteTitle.value
     const text = this.$noteText.value
-    if (!title || !text) return
+    if (!title && !text) return
     const newNote = {
       title,
       text,
